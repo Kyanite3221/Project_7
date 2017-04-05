@@ -76,28 +76,29 @@ public class LocationCalculator {
         System.out.println("finX: " + finX);
         double finY = Utils.getKnownLocations5GHz().get(givenPairs[0].getMacAsString()).getY()*100.0;
         double factor = 100.0;
-        double weight;
-        double[] usedFactors = new double[validPositions];
-        usedFactors[0] = 100.0;
+        double totalWeight = factor;
 
         for (int i = 1; i < validPositions; i++) {
                 Position current = Utils.getKnownLocations5GHz().get(givenPairs[validPositions-i].getMacAsString());
-                weight = factor / calculateFactor(givenPairs[0].getRssi(),givenPairs[i].getRssi());
+                double weight = factor / calculateFactor(givenPairs[0].getRssi(),givenPairs[i].getRssi());
 
                 finX += current.getX()*weight;
                 System.out.println("finX: " + finX);
                 finY += current.getY()*weight;
-                usedFactors[i] = weight;
+                totalWeight += weight;
         }
 
-        double totalFactors = 0;
-        for (int i = 0; i < usedFactors.length; i++) {
-            totalFactors += usedFactors[i];
-        }
-
-        return new Position(finX/totalFactors,finY/totalFactors);
+        return new Position(finX/totalWeight,finY/totalWeight);
     }
 
+    public static double calculateFactor (int rSSI, int rSSII) {
+        int difference = rSSI-rSSII;
+        if (difference == 0){
+            return 1.0;
+        }
+        double result = Math.pow(2.0 ,Math.log10(difference)/Math.log10(3));
+        return result;
+    }
 
 
     public static Position determineAverage(LinkedList<Position> previousPositions, Position newestCalculated) {
@@ -121,15 +122,5 @@ public class LocationCalculator {
         finY += newestCalculated.getY();
 
         return new Position(finX/ammountOfEntries, finY/ammountOfEntries);
-    }
-
-
-    public static double calculateFactor (int rSSI, int rSSII) {
-        int difference = rSSI-rSSII;
-        if (difference == 0){
-            return 1.0;
-        }
-        double result = Math.pow(2.0 ,Math.log10(difference)/Math.log10(3));
-        return result;
     }
 }
