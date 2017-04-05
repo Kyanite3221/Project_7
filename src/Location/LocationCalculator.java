@@ -125,4 +125,18 @@ public class LocationCalculator {
 
         return new Position(finX/ammountOfEntries, finY/ammountOfEntries);
     }
+
+    public static Position pureAverage (LinkedList<Position> previousPositions) {
+        double finX = 0;
+        double finY = 0;
+        double ammountOfEntries = 0;
+
+        for (Position location : previousPositions) {
+            finX += location.getX();
+            finY += location.getY();
+            ammountOfEntries++;
+        }
+
+        return new Position(finX/ammountOfEntries, finY/ammountOfEntries);
+    }
 }

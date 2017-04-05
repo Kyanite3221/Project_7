@@ -7,10 +7,7 @@ import org.w3c.dom.css.Rect;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Created by thomas on 5-4-17.
@@ -18,6 +15,8 @@ import java.util.Iterator;
 public class SecondLocationFinder implements LocationFinder {
 
 	private static final double FREQUENCY_IN_GHZ = 5200;
+	private LinkedList<Position> previousPositions = new LinkedList<>();
+	private static final int PREVIOUS_POSITIONS_LENGTH = 7;
 
 	public SecondLocationFinder() {
 
@@ -27,8 +26,16 @@ public class SecondLocationFinder implements LocationFinder {
 	public Position locate(MacRssiPair[] data) {
 		MacRssiPair[] filteredPairs = filterKnownData(data);
 
+		if (filteredPairs.length == 0) {
+			if (previousPositions.size()>0) {
+				return LocationCalculator.pureAverage(previousPositions);
+			} else {
+				return new Position(-1,-1);
+			}
+		}
 		Position[] centers = getPositions(filteredPairs);
 
+		System.out.println(centers);
 		Rectangle[] rectangles = new Rectangle[centers.length];
 
 		for (int i = 0; i < centers.length; i++) {
@@ -55,7 +62,18 @@ public class SecondLocationFinder implements LocationFinder {
 		double x = estimatedRectangle.getX() + estimatedRectangle.getWidth()/2;
 		double y = estimatedRectangle.getY() + estimatedRectangle.getHeight()/2;
 
-		return new Position(x, y);
+		Position calculatedPosition = new Position(x,y);
+
+		if (! (calculatedPosition.getX() == -1 &&
+				calculatedPosition.getY() == -1)) {
+			previousPositions.push(calculatedPosition);
+		}
+
+		if (previousPositions.size() >= PREVIOUS_POSITIONS_LENGTH) {
+			previousPositions.removeLast();
+		}
+
+		return LocationCalculator.determineAverage(previousPositions, calculatedPosition);
 	}
 
 	private static Position[] getPositions(MacRssiPair[] filteredPairs) {
