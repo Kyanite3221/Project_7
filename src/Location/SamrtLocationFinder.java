@@ -4,10 +4,7 @@ import Utils.MacRssiPair;
 import Utils.Position;
 import Utils.Utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Created by thomas on 5-4-17.
@@ -24,7 +21,9 @@ public class SamrtLocationFinder implements LocationFinder {
 
 	@Override
 	public Position locate(MacRssiPair[] data) {
-		return null;
+		ArrayList<MacRssiPair> knownData = getAllKnownFromList(data);
+		Position[] strongestKnownPositions = getPositionsOfStrongestKnown(knownData);
+		return LocationCalculator.weightedPositionCalculator(strongestKnownPositions);
 	}
 
 	private ArrayList<MacRssiPair> getAllKnownFromList(MacRssiPair[] data){
@@ -48,6 +47,7 @@ public class SamrtLocationFinder implements LocationFinder {
 			positionsOfStrongestKnown[i] = knownLocations.get(knownFromList.get(i).getMacAsString());
 		}
 
+		System.out.println(Arrays.toString(positionsOfStrongestKnown));
 		return positionsOfStrongestKnown;
 	}
 }
