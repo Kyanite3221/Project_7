@@ -6,7 +6,7 @@ public class Utils {
 
 	/**
 	 * Make a long from a byte[6], useful for storing the MAC addresses
-	 * 
+	 *
 	 * @param bytes
 	 * @return
 	 */
@@ -24,7 +24,7 @@ public class Utils {
 	/**
 	 * Returns a HashMap of the known AP locations as a <String, Postion> The string
 	 * is used because this is easily searchable for the hashMap
-	 * 
+	 *
 	 * @return
 	 */
 	public static HashMap<String, Position> getKnownLocations() {
@@ -36,7 +36,7 @@ public class Utils {
 		knownLocations.put("64:D9:89:43:C1:50", new Position(190,45));	//ap3600-0099
 		knownLocations.put("64:D9:89:46:01:30", new Position(190,6));	//ap3600-0100		
 		knownLocations.put("64:D9:89:43:C4:B0", new Position(112,6));	//ap3600-0101
-		
+
 		// APs Oost Horst 116
 		knownLocations.put("64:D9:89:43:CF:E0", new Position(58,6));	//ap3600-0104
 		knownLocations.put("64:D9:89:43:D4:F0", new Position(10,6));	//ap3600-0105
@@ -46,5 +46,23 @@ public class Utils {
 		return knownLocations;
 	}
 
-}
+	public static HashMap<String, Position> getKnownLocations5GHz() {
 
+		HashMap<String, Position> knownLocations = new HashMap<String, Position>();
+
+		// APs Oost Horst 115
+		knownLocations.put("64:D9:89:43:C7:DF", new Position(112,45));	//ap3600-0102	5GHz
+		knownLocations.put("64:D9:89:43:C1:5F", new Position(190,45));	//ap3600-0099	5GHz
+		knownLocations.put("64:D9:89:46:01:3F", new Position(190,6));	//ap3600-0100	5GHz
+		knownLocations.put("64:D9:89:43:C4:BF", new Position(112,6));	//ap3600-0101	5GHz
+
+		// APs Oost Horst 116
+		knownLocations.put("64:D9:89:43:CF:EF", new Position(58,6));	//ap3600-0104	5GHz
+		knownLocations.put("64:D9:89:43:D4:FF", new Position(10,6));	//ap3600-0105	5GHz
+		knownLocations.put("64:D9:89:43:CD:6F", new Position(10,45));	//ap3600-0106	5GHz
+		knownLocations.put("64:D9:89:43:D0:0F", new Position(58,45));	//ap3600-0103	5GHz
+
+		return knownLocations;
+	}
+
+}

@@ -21,7 +21,7 @@ public class SamrtLocationFinder implements LocationFinder {
 	private LinkedList<Position> previousPositions = new LinkedList<>();
 
 	public SamrtLocationFinder(){
-		knownLocations = Utils.getKnownLocations(); //Put the known locations in our hashMap
+		knownLocations = Utils.getKnownLocations5GHz(); //Put the known locations in our hashMap
 	}
 
 	@Override
