@@ -13,7 +13,7 @@ import java.util.*;
  */
 public class SamrtLocationFinder implements LocationFinder {
 
-	private static final int PREVIOUS_POSITIONS_LENGTH = 5;
+	private static final int PREVIOUS_POSITIONS_LENGTH = 12;
 	private static int POSITION_ARRAY_LENGTH = 5;
 
 	private HashMap<String, Position> knownLocations; //Contains the known locations of APs. The long is a MAC address.
@@ -78,5 +78,18 @@ public class SamrtLocationFinder implements LocationFinder {
 		}
 
 		return knownFromList;
+	}
+
+	private Position[] getPositionsOfStrongestKnown(ArrayList<MacRssiPair> knownFromList) {
+		Position[] positionsOfStrongestKnown = new Position[POSITION_ARRAY_LENGTH];
+
+		Collections.sort(knownFromList, Comparator.comparingInt(a -> a.getRssi()));
+
+		for (int i = 0; i < positionsOfStrongestKnown.length && i < knownFromList.size(); i++) {
+			positionsOfStrongestKnown[i] = knownLocations.get(knownFromList.get(i).getMacAsString());
+		}
+
+		System.out.println(Arrays.toString(positionsOfStrongestKnown));
+		return positionsOfStrongestKnown;
 	}
 }

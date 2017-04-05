@@ -72,16 +72,16 @@ public class LocationCalculator {
             return new Position(-1,-1);
         }
 
-        double finX = Utils.getKnownLocations().get(givenPairs[0].getMacAsString()).getX()*100.0;
+        double finX = Utils.getKnownLocations5GHz().get(givenPairs[0].getMacAsString()).getX()*100.0;
         System.out.println("finX: " + finX);
-        double finY = Utils.getKnownLocations().get(givenPairs[0].getMacAsString()).getY()*100.0;
+        double finY = Utils.getKnownLocations5GHz().get(givenPairs[0].getMacAsString()).getY()*100.0;
         double factor = 100.0;
         double weight;
         double[] usedFactors = new double[validPositions];
         usedFactors[0] = 100.0;
 
         for (int i = 1; i < validPositions; i++) {
-                Position current = Utils.getKnownLocations().get(givenPairs[validPositions-i].getMacAsString());
+                Position current = Utils.getKnownLocations5GHz().get(givenPairs[validPositions-i].getMacAsString());
                 weight = factor / calculateFactor(givenPairs[0].getRssi(),givenPairs[i].getRssi());
 
                 finX += current.getX()*weight;
