@@ -51,4 +51,8 @@ public class LocationCalculator {
             }
         }
     }
+
+    public static Position determineAverage(Position first, Position second) {
+        return new Position((first.getX()+second.getY())/2.0,(first.getY()+second.getY())/2.0);
+    }
 }
