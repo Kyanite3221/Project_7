@@ -73,16 +73,19 @@ public class LocationCalculator {
         }
 
         double finX = Utils.getKnownLocations().get(givenPairs[0].getMacAsString()).getX()*100.0;
+        System.out.println("finX: " + finX);
         double finY = Utils.getKnownLocations().get(givenPairs[0].getMacAsString()).getY()*100.0;
         double factor = 100.0;
         double weight;
         double[] usedFactors = new double[validPositions];
+        usedFactors[0] = 100.0;
 
         for (int i = 1; i < validPositions; i++) {
                 Position current = Utils.getKnownLocations().get(givenPairs[validPositions-i].getMacAsString());
                 weight = factor / calculateFactor(givenPairs[0].getRssi(),givenPairs[i].getRssi());
 
                 finX += current.getX()*weight;
+                System.out.println("finX: " + finX);
                 finY += current.getY()*weight;
                 usedFactors[i] = weight;
         }
@@ -123,7 +126,10 @@ public class LocationCalculator {
 
     public static double calculateFactor (int rSSI, int rSSII) {
         int difference = rSSI-rSSII;
-        double result = Math.pow(2,Math.log10(difference)/Math.log10(3));
+        if (difference == 0){
+            return 1.0;
+        }
+        double result = Math.pow(2.0 ,Math.log10(difference)/Math.log10(3));
         return result;
     }
 }
