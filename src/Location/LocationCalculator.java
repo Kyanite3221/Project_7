@@ -2,6 +2,9 @@ package Location;
 
 import Utils.MacRssiPair;
 import Utils.Position;
+import javafx.geometry.Pos;
+
+import java.util.LinkedList;
 
 /**
  * Created by freem on 4/5/2017.
@@ -102,7 +105,26 @@ public class LocationCalculator {
 
 
 
-    public static Position determineAverage(Position first, Position second) {
-        return new Position((first.getX()+second.getY())/2.0,(first.getY()+second.getY())/2.0);
+    public static Position determineAverage(LinkedList<Position> previousPositions, Position newestCalculated) {
+        if (previousPositions.size() == 0) {    //set up, list is empty, assume the first calculated value
+            return newestCalculated;
+        } else if (newestCalculated.getY() == -1 && newestCalculated.getX() == -1) {    //wrong calculated value, assume the last legit value
+            return previousPositions.getFirst();
+        }
+
+        double finX = 0;
+        double finY = 0;
+        double ammountOfEntries = 1;
+
+        for (Position location : previousPositions) {
+            finX += location.getX();
+            finY += location.getY();
+            ammountOfEntries++;
+        }
+
+        finX += newestCalculated.getX();
+        finY += newestCalculated.getY();
+
+        return new Position(finX/ammountOfEntries, finY/ammountOfEntries);
     }
 }
