@@ -28,23 +28,11 @@ public class SamrtLocationFinder implements LocationFinder {
 		MacRssiPair[] filteredData = filterKnownData(data);
 		sortDataByRssi(filteredData);
 
+		System.out.println(Arrays.toString(filteredData));
 
-		ArrayList<MacRssiPair> knownData = getAllKnownFromList(data);
-		Position[] strongestKnownPositions = getPositionsOfStrongestKnown(knownData);
-		Position calculatedLocation = LocationCalculator.weightedPositionCalculator(strongestKnownPositions);
-		Position averagePosition = LocationCalculator.determineAverage(previousPositions, calculatedLocation);
+		Position calculatedPosition = LocationCalculator.fairPositionCalculator(filteredData);
 
-		if (previousPositions.size() == 0 ||
-				(! (previousPositions.getFirst().getX() == calculatedLocation.getX() &&
-				previousPositions.getFirst().getY() == calculatedLocation.getY()))) {
-			previousPositions.push(calculatedLocation);
-		}
-
-		if (previousPositions.size() > 4) {
-			previousPositions.removeLast();
-		}
-
-		return averagePosition;
+		return calculatedPosition;
 	}
 
 	private MacRssiPair[] filterKnownData(MacRssiPair[] data) {
@@ -61,7 +49,8 @@ public class SamrtLocationFinder implements LocationFinder {
 	}
 
 	private void sortDataByRssi(MacRssiPair[] data) {
-		Arrays.sort(data, Comparator.comparingInt(a -> a.getRssi()));
+		Comparator<MacRssiPair> rssiComparator = Comparator.comparing(a -> a.getRssi());
+		Arrays.sort(data, rssiComparator.reversed());
 	}
 
 	private ArrayList<MacRssiPair> getAllKnownFromList(MacRssiPair[] data){

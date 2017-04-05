@@ -62,7 +62,7 @@ public class LocationCalculator {
             givens[i] = givenPairs[i].getRssi();
         }
         int validPositions=0;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < givenPairs.length; i++) {
             if (givenPairs[i] != null) {
                 validPositions++;
             }
@@ -72,19 +72,19 @@ public class LocationCalculator {
             return new Position(-1,-1);
         }
 
-        double finX = Utils.getKnownLocations().get(givenPairs[0].getMac()).getX()*100.0;
-        double finY = Utils.getKnownLocations().get(givenPairs[0].getMac()).getY()*100.0;
+        double finX = Utils.getKnownLocations().get(givenPairs[0].getMacAsString()).getX()*100.0;
+        double finY = Utils.getKnownLocations().get(givenPairs[0].getMacAsString()).getY()*100.0;
         double factor = 100.0;
-        double weigth;
+        double weight;
         double[] usedFactors = new double[validPositions];
 
         for (int i = 1; i < validPositions; i++) {
-                Position current = Utils.getKnownLocations().get(givenPairs[validPositions-i].getMac());
-                weigth = factor / calculateFactor(givenPairs[0].getRssi(),givenPairs[i].getRssi());
+                Position current = Utils.getKnownLocations().get(givenPairs[validPositions-i].getMacAsString());
+                weight = factor / calculateFactor(givenPairs[0].getRssi(),givenPairs[i].getRssi());
 
-                finX += current.getX()*weigth;
-                finY += current.getY()*weigth;
-                usedFactors[i] = weigth;
+                finX += current.getX()*weight;
+                finY += current.getY()*weight;
+                usedFactors[i] = weight;
         }
 
         double totalFactors = 0;
