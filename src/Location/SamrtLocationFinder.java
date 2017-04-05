@@ -4,6 +4,8 @@ import Utils.MacRssiPair;
 import Utils.Position;
 import Utils.Utils;
 
+import javax.crypto.Mac;
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -23,22 +25,43 @@ public class SamrtLocationFinder implements LocationFinder {
 
 	@Override
 	public Position locate(MacRssiPair[] data) {
+		MacRssiPair[] filteredData = filterKnownData(data);
+		sortDataByRssi(filteredData);
+
+
 		ArrayList<MacRssiPair> knownData = getAllKnownFromList(data);
 		Position[] strongestKnownPositions = getPositionsOfStrongestKnown(knownData);
 		Position calculatedLocation = LocationCalculator.weightedPositionCalculator(strongestKnownPositions);
 		Position averagePosition = LocationCalculator.determineAverage(previousPositions, calculatedLocation);
 
 		if (previousPositions.size() == 0 ||
-				(! (previousPositions.getFirst().getX() == averagePosition.getX() &&
-				previousPositions.getFirst().getY() == averagePosition.getY()))) {
-			previousPositions.push(averagePosition);
+				(! (previousPositions.getFirst().getX() == calculatedLocation.getX() &&
+				previousPositions.getFirst().getY() == calculatedLocation.getY()))) {
+			previousPositions.push(calculatedLocation);
 		}
 
-		if (previousPositions.size() > 9) {
+		if (previousPositions.size() > 4) {
 			previousPositions.removeLast();
 		}
 
 		return averagePosition;
+	}
+
+	private MacRssiPair[] filterKnownData(MacRssiPair[] data) {
+		ArrayList<MacRssiPair> foundKnownData = new ArrayList<>(Arrays.asList(data));
+		Iterator<MacRssiPair> iterator = foundKnownData.iterator();
+		while (iterator.hasNext()) {
+			if (!knownLocations.containsKey(iterator.next().getMacAsString())) {
+				iterator.remove();
+			}
+		}
+		MacRssiPair[] val = new MacRssiPair[foundKnownData.size()];
+		foundKnownData.toArray(val);
+		return val;
+	}
+
+	private void sortDataByRssi(MacRssiPair[] data) {
+		Arrays.sort(data, Comparator.comparingInt(a -> a.getRssi()));
 	}
 
 	private ArrayList<MacRssiPair> getAllKnownFromList(MacRssiPair[] data){
