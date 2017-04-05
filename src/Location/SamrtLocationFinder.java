@@ -15,6 +15,8 @@ public class SamrtLocationFinder implements LocationFinder {
 
 	private HashMap<String, Position> knownLocations; //Contains the known locations of APs. The long is a MAC address.
 
+	private LinkedList<Position> previousPositions = new LinkedList<>();
+
 	public SamrtLocationFinder(){
 		knownLocations = Utils.getKnownLocations(); //Put the known locations in our hashMap
 	}
@@ -23,7 +25,20 @@ public class SamrtLocationFinder implements LocationFinder {
 	public Position locate(MacRssiPair[] data) {
 		ArrayList<MacRssiPair> knownData = getAllKnownFromList(data);
 		Position[] strongestKnownPositions = getPositionsOfStrongestKnown(knownData);
-		return LocationCalculator.weightedPositionCalculator(strongestKnownPositions);
+		Position calculatedLocation = LocationCalculator.weightedPositionCalculator(strongestKnownPositions);
+		Position averagePosition = LocationCalculator.determineAverage(previousPositions, calculatedLocation);
+
+		if (previousPositions.size() == 0 ||
+				(! (previousPositions.getFirst().getX() == averagePosition.getX() &&
+				previousPositions.getFirst().getY() == averagePosition.getY()))) {
+			previousPositions.push(averagePosition);
+		}
+
+		if (previousPositions.size() > 9) {
+			previousPositions.removeLast();
+		}
+
+		return averagePosition;
 	}
 
 	private ArrayList<MacRssiPair> getAllKnownFromList(MacRssiPair[] data){

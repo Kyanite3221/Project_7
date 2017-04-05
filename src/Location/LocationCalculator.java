@@ -2,7 +2,6 @@ package Location;
 
 import Utils.MacRssiPair;
 import Utils.Position;
-import javafx.geometry.Pos;
 
 import java.util.LinkedList;
 
