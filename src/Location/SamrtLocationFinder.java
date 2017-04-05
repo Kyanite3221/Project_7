@@ -29,10 +29,24 @@ public class SamrtLocationFinder implements LocationFinder {
 		sortDataByRssi(filteredData);
 
 		System.out.println(Arrays.toString(filteredData));
+		for (MacRssiPair filteredDatum : filteredData) {
+			System.out.println(knownLocations.get(filteredDatum.getMacAsString()));
+		}
 
 		Position calculatedPosition = LocationCalculator.fairPositionCalculator(filteredData);
 
-		return calculatedPosition;
+		if (! (calculatedPosition.getX() == -1 &&
+				calculatedPosition.getY() == -1)) {
+			previousPositions.push(calculatedPosition);
+		}
+
+		if (previousPositions.size() > 4) {
+			previousPositions.removeLast();
+		}
+
+		Position averagePosition = LocationCalculator.determineAverage(previousPositions, calculatedPosition);
+
+		return averagePosition;
 	}
 
 	private MacRssiPair[] filterKnownData(MacRssiPair[] data) {
