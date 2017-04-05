@@ -45,7 +45,7 @@ public class SimpleLocationFinder implements LocationFinder{
 	 */
 	private void printMacs(MacRssiPair[] data) {
 		for (MacRssiPair pair : data) {
-			System.out.println(pair);
+			System.out.println("MAC: " + pair.getMac()+"\nRSSI: " + pair.getRssi());
 		}
 	}
 
