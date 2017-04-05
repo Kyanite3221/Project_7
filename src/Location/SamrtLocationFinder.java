@@ -26,12 +26,16 @@ public class SamrtLocationFinder implements LocationFinder {
 	private ArrayList<MacRssiPair> getAllKnownFromList(MacRssiPair[] data){
 		ArrayList<MacRssiPair> knownFromList = new ArrayList<>();
 
-		for (int i = 0; (i < data.length) || (knownFromList.size() >= 5); i++) {
+		for (int i = 0; i < data.length; i++) {
 			if (knownLocations.containsKey(data[i].getMacAsString())) {
 				knownFromList.add(data[i]);
 			}
 		}
 
 		return knownFromList;
+	}
+
+	private Position[] getPositionsOfStrongestKnown(ArrayList<MacRssiPair>) {
+
 	}
 }
